@@ -14,6 +14,12 @@ never created twice; after a server error Nova checks the system before retrying
 becomes a standing instruction (never in place of an approval). The write-up for reviewers is
 [docs/WRITEUP.md](docs/WRITEUP.md).
 
+**Demo videos** ([folder](https://drive.google.com/drive/folders/1muMu6I8fsdnmTWWo51__TP8fBWrIP_e6?usp=sharing)):
+- [Nova 1](https://drive.google.com/file/d/1MkEcYVzxf3ZI2WjR3scGGQm_x5ncU0uZ/view): paying the Globex invoice, with the
+  CFO approving the payment
+- [Nova 2](https://drive.google.com/file/d/1uGOd3j4r2MpwBy4I-aeWNcNuctJz7PAq/view): setting up Initech as a vendor; Nova
+  asks about the bank-account mismatch and remembers the answer
+
 **No paid APIs.** Nova runs on a free open model on your own machine through [Ollama](https://ollama.com). The
 default is `qwen3.5:4b`. The model client can also point at any OpenAI-compatible endpoint (see `.env.example`).
 

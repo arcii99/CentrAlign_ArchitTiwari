@@ -16,6 +16,10 @@ did something unsafe, each from a gap that is now a rule, and every failure is r
 cause.
 
 What to look at first:
+- **The demo videos** ([folder](https://drive.google.com/drive/folders/1muMu6I8fsdnmTWWo51__TP8fBWrIP_e6?usp=sharing)):
+  [Nova 1](https://drive.google.com/file/d/1MkEcYVzxf3ZI2WjR3scGGQm_x5ncU0uZ/view) pays the Globex invoice, with the CFO
+  approving the payment; [Nova 2](https://drive.google.com/file/d/1uGOd3j4r2MpwBy4I-aeWNcNuctJz7PAq/view) sets up
+  Initech as a vendor, asks about the bank-account mismatch and remembers the answer
 - **[docs/architecture.md](architecture.md)**: how it fits together, in plain words (10 minutes)
 - **The console** (`uv run python -m agent.console`): every run step by step, the inbox where people approve, and
   the benchmark
