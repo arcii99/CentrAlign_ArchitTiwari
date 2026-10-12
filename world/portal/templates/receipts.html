@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Receipts{% endblock %}
+{% block content %}
+<h1>Goods / Service Receipts</h1>
+<form class="filters" method="get" action="/receipts" role="search">
+  <label for="{{ fid('q') }}">Search</label>
+  <input id="{{ fid('q') }}" name="q" value="{{ q }}" placeholder="Receipt, PO or vendor">
+  <button type="submit">Search</button>
+</form>
+<table class="grid"><thead><tr><th>Receipt</th><th>Date</th><th>PO</th><th>Vendor</th><th>Type</th><th class="num">Qty received (line 1)</th><th>Notes</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.id }}</td><td>{{ r.receipt_date|dmy }}</td><td><a href="/purchase-orders/{{ r.po_id }}">{{ r.po_id }}</a></td><td>{{ r.legal_name }}</td><td>{{ 'GRN' if r.kind == 'goods' else 'Service confirmation' }}</td><td class="num">{{ '%g' % r.qty_received }}</td><td>{{ r.notes or '' }}</td></tr>
+{% else %}<tr><td colspan="7" class="muted">No receipts match.</td></tr>{% endfor %}
+</tbody></table>
+{{ m.pager(pager, 'q=' ~ q|urlencode) }}
+{% endblock %}

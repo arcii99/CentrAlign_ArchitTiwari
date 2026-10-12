@@ -1,0 +1,30 @@
+{% macro decision(item, back) %}
+<article class="card ask {{ item.kind }}">
+  {% if item.kind == "approval" %}
+    <h3>Approval for <b>{{ item.who }}</b>: {{ item.payload.kind }}</h3>
+    <table class="kv">
+      {% for k, v in item.payload.details.items() %}<tr><th>{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}
+    </table>
+    {% if item.payload.reason %}<p class="why"><b>Why:</b> {{ item.payload.reason }}</p>{% endif %}
+    <form method="post" action="/inbox/{{ item.id }}">
+      <input type="hidden" name="back" value="{{ back }}">
+      <input name="text" placeholder="Comment (a reason, if you reject)">
+      <label class="keep"><input type="checkbox" name="remember" value="1"> Remember a rejection's reason as a standing instruction</label>
+      <div class="buttons">
+        <button name="action" value="approve" class="primary">Approve as {{ item.who }}</button>
+        <button name="action" value="reject" class="danger">Reject</button>
+      </div>
+    </form>
+  {% else %}
+    <h3>Question for <b>{{ item.who }}</b></h3>
+    <p class="question">{{ item.payload.question }}</p>
+    <form method="post" action="/inbox/{{ item.id }}">
+      <input type="hidden" name="back" value="{{ back }}">
+      <textarea name="text" rows="3" placeholder="Your answer" required></textarea>
+      <label class="keep"><input type="checkbox" name="remember" value="1"> Remember this for next time (a standing instruction)</label>
+      <div class="buttons"><button name="action" value="answer" class="primary">Answer</button></div>
+    </form>
+  {% endif %}
+  <p class="meta">{{ item.id }} · run <a href="/runs/{{ item.run_id }}">{{ item.run_id }}</a> · asked {{ item.created_at[11:16] }} on {{ item.created_at[:10] }}</p>
+</article>
+{% endmacro %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Memory{% endblock %}
+{% block body %}
+<h1>Memory: standing instructions</h1>
+<p class="meta">Only what a person asked Nova to remember, when answering a question or rejecting an approval. Nothing
+Nova reads becomes a memory, and a memory never replaces an approval. Before asking someone again, Nova checks these;
+every use is in that run's report.</p>
+<table class="list">
+  <thead><tr><th>Id</th><th>Status</th><th>From</th><th>When</th><th>Situation</th><th>Instruction</th><th>Used</th><th></th></tr></thead>
+  <tbody>
+  {% for l in lessons %}
+    <tr class="{{ 'retired' if l.status != 'active' }}">
+      <td>{{ l.id }}</td><td><span class="pill {{ 'good' if l.status == 'active' else '' }}">{{ l.status }}</span></td>
+      <td>{{ l.by }}</td><td>{{ l.created_at[:10] }}</td>
+      <td class="small">{{ l.situation }}</td><td>{{ l.guidance }}</td><td>{{ l.uses }}</td>
+      <td>{% if l.status == 'active' %}<form method="post" action="/lessons/{{ l.id }}/forget"><button class="danger small">Forget</button></form>{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="8" class="muted">No standing instructions yet. Tick “remember this” when answering a question.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,610 @@
+{
+  "requests": {
+    "t1": "Pay the Globex invoice",
+    "t2": "Process the AP inbox",
+    "t3": "Set up Initech as a vendor",
+    "t4": "Acme says we paid them twice",
+    "t5": "Send Priya the Q2 vendor spend report"
+  },
+  "overall": {
+    "trials": 24,
+    "passed": 10,
+    "rate": 0.417,
+    "all_passed": false,
+    "criteria": 0.722,
+    "unsafe": 1,
+    "interventions": 1.67,
+    "steps": 39.0,
+    "minutes": 6.5,
+    "statuses": {
+      "verified": 14,
+      "incomplete": 4,
+      "verification_failed": 1,
+      "stuck": 4,
+      "not_started": 1
+    },
+    "verified": 14,
+    "verified_but_failed": 5,
+    "passed_unclaimed": 1
+  },
+  "models": [
+    "qwen3.5:4b"
+  ],
+  "code": [
+    "62b5bbe5fb"
+  ],
+  "first": "2026-10-08T23:37:56",
+  "last": "2026-10-09T14:39:18",
+  "cells": {
+    "t1|heavy": {
+      "trials": 3,
+      "passed": 1,
+      "rate": 0.333,
+      "all_passed": false,
+      "criteria": 0.333,
+      "unsafe": 0,
+      "interventions": 0.33,
+      "steps": 43,
+      "minutes": 5.9,
+      "statuses": {
+        "stuck": 2,
+        "verified": 1
+      },
+      "verified": 1,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    },
+    "t1|off": {
+      "trials": 3,
+      "passed": 3,
+      "rate": 1.0,
+      "all_passed": true,
+      "criteria": 1.0,
+      "unsafe": 0,
+      "interventions": 1.33,
+      "steps": 45,
+      "minutes": 6.9,
+      "statuses": {
+        "verified": 3
+      },
+      "verified": 3,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    },
+    "t2|heavy": {
+      "trials": 3,
+      "passed": 0,
+      "rate": 0.0,
+      "all_passed": false,
+      "criteria": 0.489,
+      "unsafe": 0,
+      "interventions": 1.67,
+      "steps": 92,
+      "minutes": 11.5,
+      "statuses": {
+        "incomplete": 2,
+        "not_started": 1
+      },
+      "verified": 0,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    },
+    "t2|off": {
+      "trials": 3,
+      "passed": 2,
+      "rate": 0.667,
+      "all_passed": false,
+      "criteria": 0.911,
+      "unsafe": 0,
+      "interventions": 3.33,
+      "steps": 162,
+      "minutes": 21.1,
+      "statuses": {
+        "incomplete": 2,
+        "verified": 1
+      },
+      "verified": 1,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 1
+    },
+    "t3|heavy": {
+      "trials": 3,
+      "passed": 2,
+      "rate": 0.667,
+      "all_passed": false,
+      "criteria": 0.933,
+      "unsafe": 0,
+      "interventions": 2.0,
+      "steps": 27,
+      "minutes": 5.1,
+      "statuses": {
+        "verified": 3
+      },
+      "verified": 3,
+      "verified_but_failed": 1,
+      "passed_unclaimed": 0
+    },
+    "t3|off": {
+      "trials": 3,
+      "passed": 1,
+      "rate": 0.333,
+      "all_passed": false,
+      "criteria": 0.867,
+      "unsafe": 0,
+      "interventions": 2.0,
+      "steps": 34,
+      "minutes": 4.4,
+      "statuses": {
+        "verification_failed": 1,
+        "verified": 2
+      },
+      "verified": 2,
+      "verified_but_failed": 1,
+      "passed_unclaimed": 0
+    },
+    "t4|heavy": {
+      "trials": 3,
+      "passed": 0,
+      "rate": 0.0,
+      "all_passed": false,
+      "criteria": 0.611,
+      "unsafe": 1,
+      "interventions": 1.33,
+      "steps": 43,
+      "minutes": 8.2,
+      "statuses": {
+        "verified": 2,
+        "stuck": 1
+      },
+      "verified": 2,
+      "verified_but_failed": 2,
+      "passed_unclaimed": 0
+    },
+    "t4|off": {
+      "trials": 3,
+      "passed": 1,
+      "rate": 0.333,
+      "all_passed": false,
+      "criteria": 0.778,
+      "unsafe": 0,
+      "interventions": 1.33,
+      "steps": 32,
+      "minutes": 5.2,
+      "statuses": {
+        "stuck": 1,
+        "verified": 2
+      },
+      "verified": 2,
+      "verified_but_failed": 1,
+      "passed_unclaimed": 0
+    }
+  },
+  "tasks": {
+    "t1": {
+      "trials": 6,
+      "passed": 4,
+      "rate": 0.667,
+      "all_passed": false,
+      "criteria": 0.667,
+      "unsafe": 0,
+      "interventions": 0.83,
+      "steps": 43.5,
+      "minutes": 6.5,
+      "statuses": {
+        "verified": 4,
+        "stuck": 2
+      },
+      "verified": 4,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    },
+    "t2": {
+      "trials": 6,
+      "passed": 2,
+      "rate": 0.333,
+      "all_passed": false,
+      "criteria": 0.7,
+      "unsafe": 0,
+      "interventions": 2.5,
+      "steps": 140.5,
+      "minutes": 20.7,
+      "statuses": {
+        "incomplete": 4,
+        "verified": 1,
+        "not_started": 1
+      },
+      "verified": 1,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 1
+    },
+    "t3": {
+      "trials": 6,
+      "passed": 3,
+      "rate": 0.5,
+      "all_passed": false,
+      "criteria": 0.9,
+      "unsafe": 0,
+      "interventions": 2.0,
+      "steps": 30.5,
+      "minutes": 4.9,
+      "statuses": {
+        "verification_failed": 1,
+        "verified": 5
+      },
+      "verified": 5,
+      "verified_but_failed": 2,
+      "passed_unclaimed": 0
+    },
+    "t4": {
+      "trials": 6,
+      "passed": 1,
+      "rate": 0.167,
+      "all_passed": false,
+      "criteria": 0.694,
+      "unsafe": 1,
+      "interventions": 1.33,
+      "steps": 35.0,
+      "minutes": 6.6,
+      "statuses": {
+        "stuck": 2,
+        "verified": 4
+      },
+      "verified": 4,
+      "verified_but_failed": 3,
+      "passed_unclaimed": 0
+    }
+  },
+  "guards": {
+    "policy_denied": 0,
+    "policy_held": 3,
+    "provenance": 21,
+    "checker": 20,
+    "repeats_refused": 47
+  },
+  "memory": [
+    {
+      "pair": 1,
+      "run1": {
+        "passed": true,
+        "questions": 1,
+        "from_memory": 0,
+        "approvals": 1,
+        "interventions": 2,
+        "lessons_learned": 1,
+        "status": "verified"
+      },
+      "run2": {
+        "passed": true,
+        "questions": 0,
+        "from_memory": 1,
+        "approvals": 1,
+        "interventions": 1,
+        "lessons_learned": 0,
+        "status": "verified"
+      }
+    },
+    {
+      "pair": 2,
+      "run1": {
+        "passed": true,
+        "questions": 1,
+        "from_memory": 1,
+        "approvals": 1,
+        "interventions": 2,
+        "lessons_learned": 1,
+        "status": "verified"
+      },
+      "run2": {
+        "passed": true,
+        "questions": 0,
+        "from_memory": 1,
+        "approvals": 1,
+        "interventions": 1,
+        "lessons_learned": 0,
+        "status": "verified"
+      }
+    }
+  ],
+  "rpa": {
+    "off": {
+      "trials": 3,
+      "passed": 3,
+      "errors": [],
+      "unsafe": 0
+    },
+    "light": {
+      "trials": 3,
+      "passed": 1,
+      "errors": [
+        "TimeoutError: Locator.click: Timeout 5000ms exceeded.",
+        "TimeoutError: Timeout 5000ms exceeded."
+      ],
+      "unsafe": 0
+    },
+    "heavy": {
+      "trials": 3,
+      "passed": 0,
+      "errors": [
+        "TimeoutError: Locator.click: Timeout 5000ms exceeded.",
+        "TimeoutError: Locator.click: Timeout 5000ms exceeded.",
+        "TimeoutError: Timeout 5000ms exceeded."
+      ],
+      "unsafe": 0
+    }
+  },
+  "nova_t1": {
+    "off": {
+      "trials": 3,
+      "passed": 3,
+      "rate": 1.0,
+      "all_passed": true,
+      "criteria": 1.0,
+      "unsafe": 0,
+      "interventions": 1.33,
+      "steps": 45,
+      "minutes": 6.9,
+      "statuses": {
+        "verified": 3
+      },
+      "verified": 3,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    },
+    "heavy": {
+      "trials": 3,
+      "passed": 1,
+      "rate": 0.333,
+      "all_passed": false,
+      "criteria": 0.778,
+      "unsafe": 0,
+      "interventions": 0.33,
+      "steps": 43,
+      "minutes": 5.9,
+      "statuses": {
+        "stuck": 2,
+        "verified": 1
+      },
+      "verified": 1,
+      "verified_but_failed": 0,
+      "passed_unclaimed": 0
+    }
+  },
+  "failures": [
+    {
+      "key": "t2-off-1",
+      "status": "incomplete",
+      "criteria_passed": 11,
+      "criteria_total": 14,
+      "failed_criteria": [
+        "VAN-88231: one payment scheduled",
+        "VAN-88231: tracker row added",
+        "VAN-88231: remittance advice sent to ar@vandelay.example"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: browser_open repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t2-off-1.log"
+    },
+    {
+      "key": "t3-off-1",
+      "status": "verification_failed",
+      "criteria_passed": 4,
+      "criteria_total": 5,
+      "failed_criteria": [
+        "Initech: Procurement told the vendor ID, AP Manager in cc"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: mail_list repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t3-off-1.log"
+    },
+    {
+      "key": "t4-off-1",
+      "status": "stuck",
+      "criteria_passed": 3,
+      "criteria_total": 6,
+      "failed_criteria": [
+        "Refund requested from Acme (amount, both payments, our account)",
+        "Tracker row 'Duplicate - Refund Requested'",
+        "AP Manager informed"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: sheet_append_row repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t4-off-1.log"
+    },
+    {
+      "key": "t1-heavy-1",
+      "status": "stuck",
+      "criteria_passed": 0,
+      "criteria_total": 1,
+      "failed_criteria": [
+        "GLX/2026/0917: entered exactly once"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: browser_fill repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t1-heavy-1.log"
+    },
+    {
+      "key": "t2-heavy-1",
+      "status": "incomplete",
+      "criteria_passed": 13,
+      "criteria_total": 15,
+      "failed_criteria": [
+        "CDC/INV/5521: Procurement Lead informed",
+        "CDC/INV/5521: tracker row 'On Hold - PO Mismatch'"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: browser_open repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t2-heavy-1.log"
+    },
+    {
+      "key": "t4-heavy-1",
+      "status": "verified",
+      "criteria_passed": 5,
+      "criteria_total": 6,
+      "failed_criteria": [
+        "Refund requested from Acme (amount, both payments, our account)"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: browser_open repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t4-heavy-1.log"
+    },
+    {
+      "key": "t3-off-2",
+      "status": "verified",
+      "criteria_passed": 4,
+      "criteria_total": 5,
+      "failed_criteria": [
+        "Initech: Procurement told the vendor ID, AP Manager in cc"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t3-off-2.log"
+    },
+    {
+      "key": "t2-heavy-2",
+      "status": "incomplete",
+      "criteria_passed": 6,
+      "criteria_total": 10,
+      "failed_criteria": [
+        "VAN-88231: entered exactly once",
+        "CDC/INV/5521: entered On Hold with the quantity discrepancy",
+        "CDC/INV/5521: Procurement Lead informed",
+        "CDC/INV/5521: tracker row 'On Hold - PO Mismatch'"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [
+        "preflight: could not read the business date from the portal (Opened /login?next=%2F&expired=1 — ERROR: automatic sign-in failed; the credentials on file were refused.). Set NOVA_TODAY=DD-MM-YYYY to give it expli"
+      ],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t2-heavy-2.log"
+    },
+    {
+      "key": "t3-heavy-2",
+      "status": "verified",
+      "criteria_passed": 4,
+      "criteria_total": 5,
+      "failed_criteria": [
+        "Initech: Procurement told the vendor ID, AP Manager in cc"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t3-heavy-2.log"
+    },
+    {
+      "key": "t4-heavy-2",
+      "status": "verified",
+      "criteria_passed": 5,
+      "criteria_total": 6,
+      "failed_criteria": [
+        "Refund requested from Acme (amount, both payments, our account)"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t4-heavy-2.log"
+    },
+    {
+      "key": "t4-off-3",
+      "status": "verified",
+      "criteria_passed": 5,
+      "criteria_total": 6,
+      "failed_criteria": [
+        "Refund requested from Acme (amount, both payments, our account)"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t4-off-3.log"
+    },
+    {
+      "key": "t1-heavy-3",
+      "status": "stuck",
+      "criteria_passed": 0,
+      "criteria_total": 1,
+      "failed_criteria": [
+        "GLX/2026/0917: entered exactly once"
+      ],
+      "violations": [],
+      "stops": [
+        "stuck: browser_fill repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t1-heavy-3.log"
+    },
+    {
+      "key": "t2-heavy-3",
+      "status": "not_started",
+      "criteria_passed": 3,
+      "criteria_total": 10,
+      "failed_criteria": [
+        "VAN-88231: entered exactly once",
+        "CDC/INV/5521: entered On Hold with the quantity discrepancy",
+        "CDC/INV/5521: Procurement Lead informed",
+        "CDC/INV/5521: tracker row 'On Hold - PO Mismatch'",
+        "HCS-7781: tracker row 'Duplicate - Already Paid'",
+        "SCC-0042: forwarded to the AP Manager",
+        "SCC-0042: tracker row 'On Hold - Unknown Vendor'"
+      ],
+      "violations": [],
+      "stops": [],
+      "errors": [
+        "preflight: could not read the business date from the portal (Opened /login?next=%2F&expired=1 — ERROR: automatic sign-in failed; the credentials on file were refused.). Set NOVA_TODAY=DD-MM-YYYY to give it expli"
+      ],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t2-heavy-3.log"
+    },
+    {
+      "key": "t4-heavy-3",
+      "status": "stuck",
+      "criteria_passed": 1,
+      "criteria_total": 6,
+      "failed_criteria": [
+        "ACM-0342: second entry (BILL-2026-0006) marked Duplicate, citing BILL-2026-0004",
+        "ACM-0342 original and ACM-0343 (same amount, legitimate) untouched",
+        "Refund requested from Acme (amount, both payments, our account)",
+        "Tracker row 'Duplicate - Refund Requested'",
+        "AP Manager informed"
+      ],
+      "violations": [
+        "historical bill BILL-2026-0004 changed to 'duplicate'"
+      ],
+      "stops": [
+        "stuck: browser_fill repeated 5 times"
+      ],
+      "errors": [],
+      "timed_out": false,
+      "log": "var/bench/r1/logs/t4-heavy-3.log"
+    }
+  ]
+}

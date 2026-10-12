@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}{{ po.id }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/purchase-orders">Purchase Orders</a> › {{ po.id }}</div>
+<h1>Purchase Order {{ po.id }}</h1>
+<table class="kv">
+  <tr><th>Vendor</th><td><a href="/vendors/{{ po.vendor_id }}">{{ po.legal_name }}</a> ({{ po.vendor_id }})</td><th>PO date</th><td>{{ po.po_date|dmy }}</td></tr>
+  <tr><th>Description</th><td>{{ po.description }}</td><th>Status</th><td>{{ po.status|title }}</td></tr>
+</table>
+<h2>Lines</h2>
+<table class="grid"><thead><tr><th>Line</th><th>Item</th><th>HSN/SAC</th><th class="num">Qty ordered</th><th class="num">Qty received</th><th>Unit</th><th class="num">Unit price</th><th class="num">GST %</th><th class="num">Line value</th></tr></thead><tbody>
+{% for l in lines %}<tr><td>{{ l.line_no }}</td><td>{{ l.item }}</td><td>{{ l.hsn_sac }}</td><td class="num">{{ '%g' % l.qty }}</td><td class="num">{{ '%g' % l.received }}</td><td>{{ l.unit }}</td><td class="num">{{ l.unit_price|inr }}</td><td class="num">{{ '%g' % l.gst_rate }}</td><td class="num">{{ l.value|inr }}</td></tr>{% endfor %}
+</tbody></table>
+<h2>Receipts against this PO</h2>
+<table class="grid"><thead><tr><th>Receipt</th><th>Date</th><th>Type</th><th>Line</th><th class="num">Qty received</th><th>Received by</th><th>Notes</th></tr></thead><tbody>
+{% for r in receipts %}<tr><td>{{ r.id }}</td><td>{{ r.receipt_date|dmy }}</td><td>{{ 'Goods receipt (GRN)' if r.kind == 'goods' else 'Service confirmation' }}</td><td>{{ r.line_no }}</td><td class="num">{{ '%g' % r.qty_received }}</td><td>{{ r.received_by }}</td><td>{{ r.notes or '' }}</td></tr>
+{% else %}<tr><td colspan="7" class="muted">Nothing received yet.</td></tr>{% endfor %}
+</tbody></table>
+<h2>Bills against this PO</h2>
+<table class="grid"><thead><tr><th>Bill ID</th><th>Vendor invoice no.</th><th class="num">Total</th><th>Status</th></tr></thead><tbody>
+{% for b in bills %}<tr><td><a href="/bills/{{ b.id }}">{{ b.id }}</a></td><td>{{ b.vendor_invoice_no }}</td><td class="num">{{ b.total|inr }}</td><td>{{ m.status_badge(b.status) }}</td></tr>
+{% else %}<tr><td colspan="4" class="muted">No bills yet.</td></tr>{% endfor %}
+</tbody></table>
+<p><a class="button" href="/bills/new?vendor={{ po.vendor_id }}&po={{ po.id }}">+ New bill for this PO</a></p>
+{% endblock %}

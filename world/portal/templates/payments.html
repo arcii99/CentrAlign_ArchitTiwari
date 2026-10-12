@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Payments{% endblock %}
+{% block content %}
+<h1>Payments</h1>
+{{ m.errors(errors) }}
+<form class="filters" method="get" action="/payments" role="search">
+  <label for="{{ fid('vendor') }}">Vendor</label>
+  <select id="{{ fid('vendor') }}" name="vendor"><option value="">All vendors</option>
+  {% for v in vendors %}<option value="{{ v.id }}"{% if vendor == v.id %} selected{% endif %}>{{ v.legal_name }}</option>{% endfor %}
+  </select>
+  <label for="{{ fid('status') }}">Status</label>
+  <select id="{{ fid('status') }}" name="status"><option value="">All</option>
+  {% for s in ['scheduled', 'sent', 'failed', 'refunded'] %}<option value="{{ s }}"{% if status == s %} selected{% endif %}>{{ s|title }}</option>{% endfor %}
+  </select>
+  <label for="{{ fid('date_from') }}">From</label>
+  <input id="{{ fid('date_from') }}" name="date_from" value="{{ date_from }}" placeholder="DD-MM-YYYY" size="11">
+  <label for="{{ fid('date_to') }}">To</label>
+  <input id="{{ fid('date_to') }}" name="date_to" value="{{ date_to }}" placeholder="DD-MM-YYYY" size="11">
+  <button type="submit">Search</button>
+  <a class="button secondary" href="{{ export }}">Export CSV</a>
+</form>
+<table class="grid"><thead><tr><th>Payment ID</th><th>Date</th><th>Vendor</th><th>Bill</th><th class="num">Amount</th><th>Method</th><th>Status</th><th>UTR</th></tr></thead><tbody>
+{% for p in rows %}<tr><td><a href="/payments/{{ p.id }}">{{ p.id }}</a></td><td>{{ p.payment_date|dmy }}</td><td>{{ p.legal_name }}</td><td><a href="/bills/{{ p.bill_id }}">{{ p.bill_id }}</a></td><td class="num">{{ p.amount|inr }}</td><td>{{ p.method }}</td><td>{{ p.status|title }}</td><td>{{ p.utr or '' }}</td></tr>
+{% else %}<tr><td colspan="8" class="muted">No payments match.</td></tr>{% endfor %}
+</tbody></table>
+{{ m.pager(pager, 'vendor=' ~ vendor ~ '&status=' ~ status ~ '&date_from=' ~ date_from ~ '&date_to=' ~ date_to) }}
+{% endblock %}

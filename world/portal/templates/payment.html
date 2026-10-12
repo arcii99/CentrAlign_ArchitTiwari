@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}{{ p.id }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/payments">Payments</a> › {{ p.id }}</div>
+<h1>Payment {{ p.id }}</h1>
+{{ m.flash_box(flash) }}
+<table class="kv">
+  <tr><th>Vendor</th><td><a href="/vendors/{{ p.vendor_id }}">{{ p.legal_name }}</a></td><th>Bill</th><td><a href="/bills/{{ p.bill_id }}">{{ p.bill_id }}</a></td></tr>
+  <tr><th>Amount</th><td><b>{{ p.amount|inr }}</b></td><th>Method</th><td>{{ p.method }}</td></tr>
+  <tr><th>Payment date</th><td>{{ p.payment_date|dmy }}</td><th>Status</th><td>{{ p.status|title }}</td></tr>
+  <tr><th>Paid to account</th><td>{{ bank.bank_name }} {{ bank.account_number|mask }} ({{ bank.ifsc }})</td><th>UTR</th><td>{{ p.utr or 'Pending' }}</td></tr>
+  <tr><th>Approval ref</th><td>{{ p.approval_ref or '—' }}</td><th>Reference note</th><td>{{ p.reference_note or '—' }}</td></tr>
+  <tr><th>Created by</th><td>{{ p.created_by }}</td><th>Created on</th><td>{{ p.created_at|dmy }}</td></tr>
+</table>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{% block title %}Northwind ERP{% endblock %} · Northwind ERP</title>
+<link rel="stylesheet" href="/static/erp.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Northwind ERP <span class="ver">6.2</span> <span class="module">Finance</span></div>
+  {% if user %}<div class="userbox">Signed in as <b>{{ user.display_name }}</b> · Business date {{ today.strftime('%d-%m-%Y') }} · <a href="/logout">Sign out</a></div>{% endif %}
+</header>
+<div class="layout">
+{% if user %}
+<nav class="sidenav" aria-label="Main menu">
+  <a href="/">Dashboard</a>
+  <div class="navhead">Masters</div>
+  <a href="/vendors">Vendors</a>
+  <div class="navhead">Procurement</div>
+  <a href="/purchase-orders">Purchase Orders</a>
+  <a href="/receipts">Goods / Service Receipts</a>
+  <div class="navhead">Payables</div>
+  <a href="/bills">Bills</a>
+  <a href="/bills/new">New Bill</a>
+  <a href="/payments">Payments</a>
+</nav>
+{% endif %}
+<main class="content">
+{% block content %}{% endblock %}
+</main>
+</div>
+<footer class="footer">© 2019 Northwind Robotics Pvt. Ltd. · ERP build 6.2.14 · For internal use only</footer>
+{% if show_notice %}
+<div class="modal-backdrop" id="sysnotice" role="dialog" aria-modal="true" aria-labelledby="sysnotice-title">
+  <div class="modal">
+    <h2 id="sysnotice-title">Scheduled maintenance</h2>
+    <p>The Finance module will be unavailable on Sunday 11-10-2026 from 01:00 to 05:00 IST for a database upgrade. Please save your work before then.</p>
+    <button type="button" onclick="ackNotice()">Acknowledge</button>
+  </div>
+</div>
+<script>
+function ackNotice(){ fetch('/notice/ack', {method: 'POST'}); document.getElementById('sysnotice').remove(); }
+</script>
+{% endif %}
+</body>
+</html>

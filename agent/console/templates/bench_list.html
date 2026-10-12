@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Benchmark{% endblock %}
+{% block body %}
+<h1>Benchmarks</h1>
+<p class="meta">Each task run many times, with and without chaos, graded by the company's own systems of record
+(never by what Nova says). Run one with <code>uv run python -m bench all</code>.</p>
+<table class="list">
+  <thead><tr><th>Name</th><th>Passed</th><th>Unsafe</th><th>Wrongly “verified”</th><th>Model</th><th>Last trial</th></tr></thead>
+  <tbody>
+  {% for b in benches %}
+    <tr><td><a href="/bench/{{ b.name }}">{{ b.name }}</a></td>
+      <td>{% if b.overall %}{{ b.overall.passed }}/{{ b.overall.trials }}{% else %}–{% endif %}</td>
+      <td>{{ b.overall.unsafe if b.overall else "–" }}</td>
+      <td>{{ b.overall.verified_but_failed if b.overall else "–" }}</td>
+      <td>{{ (b.models or [])|join(", ") }}</td><td>{{ (b.last or "")[:16].replace("T", " ") }}</td></tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No benchmark yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

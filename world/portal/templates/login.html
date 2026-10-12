@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="login-box">
+  <h1>Sign in to Northwind ERP</h1>
+  {% if info %}<div class="flash warn" role="status">{{ info }}</div>{% endif %}
+  {% if error %}<div class="errors" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="field"><label for="{{ fid('username') }}">User ID</label>
+      <input id="{{ fid('username') }}" name="username" autocomplete="username"></div>
+    <div class="field"><label for="{{ fid('password') }}">Password</label>
+      <input id="{{ fid('password') }}" name="password" type="password" autocomplete="current-password"></div>
+    <button type="submit">Sign in</button>
+  </form>
+</div>
+{% endblock %}

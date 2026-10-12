@@ -1,0 +1,16 @@
+{
+  "_about": "What a sensible AP Manager says during T3. The registration form's account number differs from the cancelled cheque: the cheque is the bank's own document. He asks Nova to remember his answer as a standing instruction (Phase 4).",
+  "answers": [
+    {
+      "match": "account|cheque|mismatch|differ|5678|5687",
+      "answer": "Good catch. The cancelled cheque is printed by the bank; the registration form was typed by the vendor. Use the account number on the cancelled cheque (the one ending 5687), and get the bank account approved as usual.",
+      "remember": true
+    }
+  ],
+  "reject": [
+    {
+      "match": "50200012345678",
+      "comment": "Rejected: that account number does not match the cancelled cheque. Use the cheque's account number."
+    }
+  ]
+}

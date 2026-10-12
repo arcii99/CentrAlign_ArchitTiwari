@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}{{ b.id }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/bills">Bills</a> › {{ b.id }}</div>
+<h1>Bill {{ b.id }} {{ m.status_badge(b.status) }}</h1>
+{{ m.flash_box(flash) }}
+{{ m.errors(errors) }}
+<table class="kv">
+  <tr><th>Vendor</th><td><a href="/vendors/{{ b.vendor_id }}">{{ b.legal_name }}</a> ({{ b.vendor_id }})</td><th>PO</th><td>{% if b.po_id %}<a href="/purchase-orders/{{ b.po_id }}">{{ b.po_id }}</a>{% else %}—{% endif %}</td></tr>
+  <tr><th>Vendor invoice no.</th><td>{{ b.vendor_invoice_no }}</td><th>Invoice date</th><td>{{ b.invoice_date|dmy }}</td></tr>
+  <tr><th>Taxable value</th><td>{{ b.taxable_value|inr }}</td><th>GST</th><td>{{ b.gst_amount|inr }}</td></tr>
+  <tr><th>Invoice total</th><td>{{ b.total|inr }}</td><th>TDS</th><td>{{ b.tds_amount|inr }}</td></tr>
+  <tr><th>Net payable</th><td><b>{{ b.net_payable|inr }}</b></td><th>Due date</th><td>{{ b.due_date|dmy }}</td></tr>
+  <tr><th>Outstanding</th><td>{{ outstanding|inr }}</td><th>Status reason</th><td>{{ b.status_reason or '—' }}</td></tr>
+  <tr><th>Notes</th><td colspan="3">{{ b.notes or '—' }}</td></tr>
+  <tr><th>Entered by</th><td>{{ b.created_by }}</td><th>Entered on</th><td>{{ b.created_at|dmy }}</td></tr>
+</table>
+<h2>Payments</h2>
+<table class="grid"><thead><tr><th>Payment ID</th><th>Date</th><th class="num">Amount</th><th>Method</th><th>Status</th><th>UTR</th></tr></thead><tbody>
+{% for p in payments %}<tr><td><a href="/payments/{{ p.id }}">{{ p.id }}</a></td><td>{{ p.payment_date|dmy }}</td><td class="num">{{ p.amount|inr }}</td><td>{{ p.method }}</td><td>{{ p.status|title }}</td><td>{{ p.utr or '' }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">No payments recorded.</td></tr>{% endfor %}
+</tbody></table>
+{% if b.status == 'posted' and outstanding > 0 %}<p><a class="button" href="/payments/new?bill={{ b.id }}">Record payment</a></p>{% endif %}
+<h2>Change status</h2>
+<form method="post" action="/bills/{{ b.id }}/status" class="form inline">
+  <div class="field"><label for="{{ fid('new_status') }}">New status</label>
+    <select id="{{ fid('new_status') }}" name="status">
+    {% for k, label in statuses.items() if k != 'paid' %}<option value="{{ k }}"{% if b.status == k %} selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select></div>
+  <div class="field"><label for="{{ fid('status_reason') }}">Reason</label>
+    <input id="{{ fid('status_reason') }}" name="status_reason" size="60"></div>
+  <div class="actions"><button type="submit">Update status</button></div>
+</form>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}{{ v.id }} {{ v.legal_name }}{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/vendors">Vendors</a> › {{ v.id }}</div>
+<h1>{{ v.legal_name }} <span class="muted">({{ v.id }})</span></h1>
+{{ m.flash_box(flash) }}
+<table class="kv">
+  <tr><th>Trade name</th><td>{{ v.trade_name or '—' }}</td><th>Status</th><td>{{ v.status|title }}</td></tr>
+  <tr><th>GSTIN</th><td>{{ v.gstin }}</td><th>PAN</th><td>{{ v.pan }}</td></tr>
+  <tr><th>Category</th><td>{{ v.category|title }}</td><th>Payment terms</th><td>{{ v.payment_terms_days }} days</td></tr>
+  <tr><th>Contact email</th><td>{{ v.email }}</td><th>Phone</th><td>{{ v.phone or '—' }}</td></tr>
+  <tr><th>Address</th><td colspan="3">{{ v.address }} ({{ state_name(v.state_code) or v.state_code }})</td></tr>
+</table>
+
+<h2>Bank accounts</h2>
+<table class="grid"><thead><tr><th>Account holder</th><th>Account no.</th><th>IFSC</th><th>Bank</th><th>Branch</th><th>Status</th><th>Added on</th></tr></thead><tbody>
+{% for b in banks %}<tr><td>{{ b.holder_name }}</td><td>{{ b.account_number|mask }}</td><td>{{ b.ifsc }}</td><td>{{ b.bank_name }}</td><td>{{ b.branch or '' }}</td><td>{{ b.status|title }}</td><td>{{ b.created_at|dmy }}</td></tr>
+{% else %}<tr><td colspan="7" class="muted">No bank accounts on file.</td></tr>{% endfor %}
+</tbody></table>
+<p><a class="button" href="/vendors/{{ v.id }}/bank/new">+ Add bank account</a></p>
+
+<h2>Purchase orders</h2>
+<table class="grid"><thead><tr><th>PO</th><th>Date</th><th>Description</th><th>Status</th></tr></thead><tbody>
+{% for p in pos %}<tr><td><a href="/purchase-orders/{{ p.id }}">{{ p.id }}</a></td><td>{{ p.po_date|dmy }}</td><td>{{ p.description }}</td><td>{{ p.status|title }}</td></tr>
+{% else %}<tr><td colspan="4" class="muted">None.</td></tr>{% endfor %}
+</tbody></table>
+
+<h2>Recent bills</h2>
+<table class="grid"><thead><tr><th>Bill ID</th><th>Vendor invoice no.</th><th>Invoice date</th><th class="num">Net payable</th><th>Status</th></tr></thead><tbody>
+{% for b in bills %}<tr><td><a href="/bills/{{ b.id }}">{{ b.id }}</a></td><td>{{ b.vendor_invoice_no }}</td><td>{{ b.invoice_date|dmy }}</td><td class="num">{{ b.net_payable|inr }}</td><td>{{ m.status_badge(b.status) }}</td></tr>
+{% else %}<tr><td colspan="5" class="muted">None.</td></tr>{% endfor %}
+</tbody></table>
+
+<h2>Recent payments</h2>
+<table class="grid"><thead><tr><th>Payment ID</th><th>Date</th><th>Bill</th><th class="num">Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>
+{% for p in payments %}<tr><td><a href="/payments/{{ p.id }}">{{ p.id }}</a></td><td>{{ p.payment_date|dmy }}</td><td><a href="/bills/{{ p.bill_id }}">{{ p.bill_id }}</a></td><td class="num">{{ p.amount|inr }}</td><td>{{ p.method }}</td><td>{{ p.status|title }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">None.</td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}

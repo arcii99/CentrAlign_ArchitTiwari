@@ -1,0 +1,63 @@
+/* Northwind ERP 6.2 — a deliberately dated enterprise look. */
+* { box-sizing: border-box; }
+body { margin: 0; font: 12px/1.45 Tahoma, Verdana, "DejaVu Sans", sans-serif; color: #1d1d1d; background: #e9edf2; }
+a { color: #0b4f9c; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px;
+  background: linear-gradient(#2a4d75, #1f3b5c); color: #fff; border-bottom: 3px solid #f0a020; }
+.topbar a { color: #ffd98a; }
+.brand { font-size: 16px; font-weight: bold; letter-spacing: .3px; }
+.brand .ver { font-size: 10px; background: #f0a020; color: #1f3b5c; padding: 1px 4px; border-radius: 2px; }
+.brand .module { font-weight: normal; opacity: .85; margin-left: 6px; }
+.layout { display: flex; min-height: calc(100vh - 70px); }
+.sidenav { width: 190px; background: #d5dde7; border-right: 1px solid #a9b6c6; padding: 8px 0; }
+.sidenav a { display: block; padding: 4px 16px; text-decoration: none; color: #13355b; }
+.sidenav a:hover { background: #bccadb; }
+.navhead { margin: 10px 10px 2px; font-size: 10px; text-transform: uppercase; color: #5a6a7d; font-weight: bold; }
+.content { flex: 1; padding: 12px 18px; background: #fff; }
+h1 { font-size: 18px; margin: 4px 0 10px; color: #1f3b5c; }
+h2 { font-size: 14px; margin: 18px 0 6px; color: #1f3b5c; border-bottom: 1px solid #c9d3df; padding-bottom: 2px; }
+.crumbs { font-size: 11px; color: #666; margin-bottom: 4px; }
+.muted { color: #777; }
+table.grid { border-collapse: collapse; width: 100%; margin: 4px 0; }
+table.grid th { background: #dfe6ee; text-align: left; border: 1px solid #b8c4d2; padding: 3px 6px; font-weight: bold; }
+table.grid td { border: 1px solid #d3dbe4; padding: 3px 6px; }
+table.grid tr:nth-child(even) td { background: #f5f7fa; }
+.num { text-align: right; white-space: nowrap; }
+table.kv { border-collapse: collapse; margin: 6px 0 10px; }
+table.kv th { text-align: left; background: #eef2f6; border: 1px solid #ccd5e0; padding: 3px 8px; width: 140px; }
+table.kv td { border: 1px solid #ccd5e0; padding: 3px 8px; min-width: 200px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: #f1f4f8; border: 1px solid #ccd5e0;
+  padding: 6px 8px; margin-bottom: 8px; }
+.form .field { display: grid; grid-template-columns: 180px 280px auto; gap: 8px; align-items: center; margin: 5px 0; }
+.form.inline .field { display: inline-grid; grid-template-columns: auto auto; margin-right: 10px; }
+.form.inline .actions { display: inline-block; }
+.form .actions { margin: 12px 0 0 188px; }
+.form.inline .actions { margin: 0; }
+input, select { font: inherit; padding: 2px 4px; border: 1px solid #8fa2b8; background: #fffef4; }
+button, .button { font: inherit; padding: 3px 10px; border: 1px solid #1f3b5c; background: linear-gradient(#fdfdfd, #d9e1ea);
+  color: #13355b; cursor: pointer; text-decoration: none; display: inline-block; }
+.button.secondary { border-color: #8fa2b8; }
+.req { color: #c00; }
+.hint { font-size: 11px; color: #777; }
+.errors { background: #fdecec; border: 1px solid #d88; color: #8a1010; padding: 6px 10px; margin: 6px 0; }
+.errors ul { margin: 4px 0 0 18px; padding: 0; }
+.flash { padding: 6px 10px; margin: 6px 0; }
+.flash.ok { background: #e7f6e7; border: 1px solid #7bbf7b; }
+.flash.warn { background: #fff6dc; border: 1px solid #e0c060; }
+.notice { background: #fff6dc; border: 1px solid #e0c060; padding: 5px 10px; margin-bottom: 10px; }
+.kpis { display: flex; gap: 10px; margin-bottom: 10px; }
+.kpi { flex: 1; border: 1px solid #b8c4d2; background: #f1f4f8; padding: 10px; text-decoration: none; color: #13355b; }
+.kpi .num { display: block; font-size: 24px; font-weight: bold; text-align: left; }
+.badge { font-size: 10px; padding: 1px 5px; border-radius: 2px; border: 1px solid #999; background: #eee; vertical-align: middle; }
+.b-posted { background: #e3efff; border-color: #7aa3d8; }
+.b-paid { background: #e7f6e7; border-color: #7bbf7b; }
+.b-on_hold { background: #fff1d6; border-color: #e0a040; }
+.b-duplicate, .b-cancelled { background: #f6e3e3; border-color: #c88; }
+.pager { margin: 6px 0; color: #444; }
+.login-box { max-width: 420px; margin: 60px auto; border: 1px solid #b8c4d2; padding: 18px 22px; background: #f7f9fb; }
+.login-box .field { display: grid; grid-template-columns: 90px 1fr; gap: 8px; margin: 8px 0; align-items: center; }
+.footer { font-size: 10px; color: #667; padding: 6px 14px; background: #d5dde7; border-top: 1px solid #a9b6c6; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(20, 30, 45, .55); z-index: 1000; display: flex;
+  align-items: center; justify-content: center; }
+.modal { background: #fff; border: 2px solid #1f3b5c; padding: 16px 20px; max-width: 460px; box-shadow: 0 6px 30px rgba(0,0,0,.4); }
+.modal h2 { margin-top: 0; }

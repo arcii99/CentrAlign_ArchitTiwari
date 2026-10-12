@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "macros.html" import decision %}
+{% block title %}Inbox{% endblock %}
+{% block body %}
+<h1>Inbox</h1>
+<p class="meta">What Nova is waiting for. Approvals are required by the company's policy and bound to exactly these
+details (approving one payment approves nothing else); questions are Nova's own. When nothing is left open for a run,
+it carries on by itself.</p>
+{% for item in items %}
+  <p class="for">For: <a href="/runs/{{ item.run_id }}">{{ item.request }}</a></p>
+  {{ decision(item, "/inbox") }}
+{% else %}
+  <p class="card muted">Nothing is waiting for a person.</p>
+{% endfor %}
+{% endblock %}

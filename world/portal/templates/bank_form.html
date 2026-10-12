@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Add bank account{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/vendors">Vendors</a> › <a href="/vendors/{{ v.id }}">{{ v.id }}</a> › Add bank account</div>
+<h1>Add bank account — {{ v.legal_name }}</h1>
+{{ m.errors(errors) }}
+<form method="post" action="/vendors/{{ v.id }}/bank/new" class="form">
+  {{ m.field("Account holder name", "holder_name", form, required=True) }}
+  {{ m.field("Account number", "account_number", form, required=True) }}
+  {{ m.field("Confirm account number", "confirm_account_number", form, required=True) }}
+  {{ m.field("IFSC", "ifsc", form, required=True, placeholder="HDFC0001234") }}
+  {{ m.field("Bank name", "bank_name", form, required=True) }}
+  {{ m.field("Branch", "branch", form) }}
+  <div class="actions"><button type="submit">Save bank account</button> <a href="/vendors/{{ v.id }}">Cancel</a></div>
+</form>
+{% endblock %}

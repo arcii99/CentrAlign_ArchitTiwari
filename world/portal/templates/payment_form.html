@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Record payment{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/payments">Payments</a> › Record payment</div>
+<h1>Record payment for {{ b.id }}</h1>
+<table class="kv">
+  <tr><th>Vendor</th><td>{{ b.legal_name }} ({{ b.vendor_id }})</td><th>Vendor invoice no.</th><td>{{ b.vendor_invoice_no }}</td></tr>
+  <tr><th>Net payable</th><td>{{ b.net_payable|inr }}</td><th>Outstanding</th><td>{{ outstanding|inr }}</td></tr>
+  <tr><th>Due date</th><td>{{ b.due_date|dmy }}</td><th>Bill status</th><td>{{ m.status_badge(b.status) }}</td></tr>
+</table>
+{{ m.errors(errors) }}
+<form method="post" action="/payments/new" class="form">
+  <input type="hidden" name="bill_id" value="{{ b.id }}">
+  {{ m.field("Amount", "amount", form, required=True) }}
+  <div class="field"><label for="{{ fid('method') }}">Payment method <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('method') }}" name="method"><option value="">— Select —</option>
+    {% for meth in ['NEFT', 'RTGS', 'IMPS'] %}<option value="{{ meth }}"{% if form.get('method') == meth %} selected{% endif %}>{{ meth }}</option>{% endfor %}
+    </select></div>
+  <div class="field"><label for="{{ fid('bank_account_id') }}">Pay to account <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('bank_account_id') }}" name="bank_account_id"><option value="">— Select account —</option>
+    {% for a in banks %}<option value="{{ a.id }}"{% if form.get('bank_account_id') == a.id|string %} selected{% endif %}>{{ a.bank_name }} {{ a.account_number|mask }} – {{ a.ifsc }}{% if a.status != 'active' %} ({{ a.status }}){% endif %}</option>{% endfor %}
+    </select></div>
+  {{ m.field("Payment date", "payment_date", form, required=True, placeholder="DD-MM-YYYY") }}
+  {{ m.field("Approval ref", "approval_ref", form, hint="Approval reference for payments that need approval") }}
+  {{ m.field("Reference note", "reference_note", form) }}
+  <div class="actions"><button type="submit">Schedule payment</button> <a href="/bills/{{ b.id }}">Cancel</a></div>
+</form>
+{% endblock %}

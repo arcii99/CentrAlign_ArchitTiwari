@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% from "macros.html" import decision %}
+{% block title %}{{ run.request }}{% endblock %}
+{% block body %}
+<section class="head">
+  <h1>{{ run.request }}</h1>
+  <p class="meta">
+    <span class="pill {{ tone(run.status) }}" id="status">{{ run.status }}</span>
+    from {{ run.requester }} · business date {{ state.today or "–" }} · {{ run.model }} ·
+    <span id="steps">{{ steps }}</span> steps · <span id="minutes">{{ run.minutes }}</span> min ·
+    run {{ run.id }}
+    {% if state.parent %} · item of <a href="/runs/{{ state.parent }}">{{ state.parent }}</a>{% endif %}
+  </p>
+  {% if run.summary %}<p class="summary">{{ run.summary }}</p>{% endif %}
+  {% if files %}<p class="meta">Evidence: {% for f in files %}<a href="/runs/{{ run.id }}/files/{{ f }}">{{ f }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+</section>
+
+{% if pending %}
+<section>
+  <h2>Waiting for a person</h2>
+  {% for item in pending %}{{ decision(item, "/runs/" ~ run.id) }}{% endfor %}
+</section>
+{% elif run.status == "waiting" %}
+<form method="post" action="/runs/{{ run.id }}/resume" class="card"><p>Everything this run asked for has been answered.</p>
+  <button class="primary">Carry on</button></form>
+{% endif %}
+
+{% if items %}
+<section>
+  <h2>Work items (one run per document)</h2>
+  <table class="list"><tbody>
+  {% for i in items %}
+    <tr><td>{{ loop.index }}.</td><td>{% if i.run_id %}<a href="/runs/{{ i.run_id }}">{{ i.request }}</a>{% else %}{{ i.request }}{% endif %}</td>
+        <td><span class="pill {{ tone(i.status) }}">{{ i.status or "to do" }}</span></td></tr>
+  {% endfor %}
+  </tbody></table>
+</section>
+{% endif %}
+
+<div class="{{ 'cols' if state.goal or verify or state.plan else '' }}">
+<section class="col">
+  {% if state.goal %}
+  <h2>Contract</h2>
+  <p><b>Goal:</b> {{ state.goal }}</p>
+  {% if state.facts %}
+  <table class="kv facts">
+    {% for f in state.facts %}<tr class="{{ '' if f.grounded else 'ungrounded' }}"><th>{{ f.name }}</th><td>{{ f.value }}</td><td class="src" title="{{ f.source }}">{{ (f.source or "").split("/")[-1] }}</td></tr>{% endfor %}
+  </table>
+  {% endif %}
+  {% if state.success_criteria %}
+  <h3>Done when</h3>
+  <ul>{% for c in state.success_criteria %}<li>{{ c }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% endif %}
+  {% if state.plan %}
+  <h3>Plan (the handbook's steps)</h3>
+  <ol class="plan">
+    {% for s in state.plan %}<li class="{{ s.status }}"><span class="pill {{ 'good' if s.status == 'done' else 'bad' if s.status == 'failed' else '' }}">{{ s.status }}</span> {{ s.text }}
+      {% if s.result %}<div class="muted">{{ s.result }}</div>{% endif %}</li>{% endfor %}
+  </ol>
+  {% endif %}
+  {% if verify %}
+  <h2>Independent verification: <span class="pill {{ 'good' if verify.verdict == 'verified' else 'bad' if verify.verdict == 'failed' else 'wait' }}">{{ verify.verdict }}</span></h2>
+  <p class="meta">A fresh, read-only look at the portal, the mailbox and the files; Nova's own claims are not evidence.</p>
+  <table class="list verify"><tbody>
+    {% for x in verify.actions + verify.criteria %}
+    <tr><td><span class="pill {{ 'good' if x.status == 'pass' else 'bad' if x.status == 'fail' else '' }}">{{ x.status }}</span></td>
+        <td>{{ x.what or x.criterion }}<div class="muted">{{ x.detail }}</div></td></tr>
+    {% endfor %}
+  </tbody></table>
+  {% endif %}
+  {% if state.approvals or state.questions %}
+  <h2>People involved</h2>
+  <ul>
+    {% for a in state.approvals %}<li>Approval {{ a.ref }} ({{ a.kind }}): <b>{{ a.status }}</b> by {{ a.by or a.approver }}{% if a.consumed_by %}, used for {{ a.consumed_by }}{% endif %}{% if a.comment %} — “{{ a.comment }}”{% endif %}</li>{% endfor %}
+    {% for q in state.questions %}<li>Asked: “{{ q.question }}” → {{ q.by }}: “{{ q.answer }}”</li>{% endfor %}
+  </ul>
+  {% endif %}
+</section>
+
+<section class="col wide">
+  <h2>What happened</h2>
+  <div id="timeline">{% include "timeline.html" %}</div>
+</section>
+</div>
+
+{% if run.status in ("running",) %}
+<script>
+(function () {
+  let last = {{ last }};
+  async function poll() {
+    try {
+      const r = await fetch("/runs/{{ run.id }}/live?after=" + last);
+      const d = await r.json();
+      if (d.html) { document.getElementById("timeline").innerHTML = d.html; last = d.last; }
+      document.getElementById("steps").textContent = d.steps;
+      document.getElementById("minutes").textContent = d.minutes;
+      if (d.status !== "running") { location.reload(); return; }
+    } catch (e) { /* the console restarted: keep trying */ }
+    setTimeout(poll, 2500);
+  }
+  setTimeout(poll, 2500);
+})();
+</script>
+{% endif %}
+{% endblock %}

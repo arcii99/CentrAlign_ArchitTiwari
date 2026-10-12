@@ -1,0 +1,30 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+# generated world state, run logs, evidence; only the benchmark results are kept
+var/*
+!var/bench/
+var/bench/*
+!var/bench/compare-*.md
+!var/bench/r1/
+!var/bench/r2/
+!var/bench/r3/
+var/bench/r*/*
+!var/bench/r*/summary.md
+!var/bench/r*/summary.json
+!var/bench/r*/results.jsonl
+!var/bench/r*/excluded.jsonl
+# personal notes, not part of the submission
+docs/DEMO.md
+docs/SimpleDemo.md
+docs/progress.md
+docs/Topics.md
+docs/StructuredStudy.md
+docs/SETUP_WINDOWS.md
+docs/SETUP_WSL.md
+docs/context/session-transcript.md
+CLAUDE.md
+Dev/
+docs/Nova.md

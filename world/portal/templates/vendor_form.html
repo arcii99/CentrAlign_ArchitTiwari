@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}New vendor{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/vendors">Vendors</a> › New vendor</div>
+<h1>New vendor</h1>
+{{ m.errors(errors) }}
+<form method="post" action="/vendors/new" class="form">
+  {{ m.field("Legal name", "legal_name", form, required=True) }}
+  {{ m.field("Trade name", "trade_name", form) }}
+  {{ m.field("GSTIN", "gstin", form, required=True, placeholder="29ABCDE1234F1Z5") }}
+  {{ m.field("PAN", "pan", form, required=True, placeholder="ABCDE1234F") }}
+  <div class="field"><label for="{{ fid('state_code') }}">State <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('state_code') }}" name="state_code"><option value="">— Select —</option>
+    {% for code, name in states.items() %}<option value="{{ code }}"{% if form.get('state_code') == code %} selected{% endif %}>{{ code }} – {{ name }}</option>{% endfor %}
+    </select></div>
+  <div class="field"><label for="{{ fid('category') }}">Category <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('category') }}" name="category"><option value="">— Select —</option>
+      <option value="goods"{% if form.get('category') == 'goods' %} selected{% endif %}>Goods</option>
+      <option value="services"{% if form.get('category') == 'services' %} selected{% endif %}>Services</option>
+    </select></div>
+  {{ m.field("Contact email", "email", form, required=True) }}
+  {{ m.field("Phone", "phone", form) }}
+  {{ m.field("Registered address", "address", form, required=True) }}
+  <div class="field"><label for="{{ fid('payment_terms_days') }}">Payment terms <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('payment_terms_days') }}" name="payment_terms_days">
+    {% for t in ['15', '30', '45', '60'] %}<option value="{{ t }}"{% if form.get('payment_terms_days') == t %} selected{% endif %}>{{ t }} days</option>{% endfor %}
+    </select></div>
+  <div class="actions"><button type="submit">Save vendor</button> <a href="/vendors">Cancel</a></div>
+</form>
+{% endblock %}

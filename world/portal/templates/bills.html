@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Bills{% endblock %}
+{% block content %}
+<h1>Bills</h1>
+<form class="filters" method="get" action="/bills" role="search">
+  <label for="{{ fid('q') }}">Search</label>
+  <input id="{{ fid('q') }}" name="q" value="{{ q }}" placeholder="Bill ID or vendor invoice no.">
+  <label for="{{ fid('vendor') }}">Vendor</label>
+  <select id="{{ fid('vendor') }}" name="vendor"><option value="">All vendors</option>
+  {% for v in vendors %}<option value="{{ v.id }}"{% if vendor == v.id %} selected{% endif %}>{{ v.legal_name }}</option>{% endfor %}
+  </select>
+  <label for="{{ fid('status') }}">Status</label>
+  <select id="{{ fid('status') }}" name="status"><option value="">All</option>
+  {% for k, label in statuses.items() %}<option value="{{ k }}"{% if status == k %} selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <button type="submit">Search</button>
+  <a class="button" href="/bills/new">+ New bill</a>
+  <a class="button secondary" href="{{ export }}">Export CSV</a>
+</form>
+<table class="grid"><thead><tr><th>Bill ID</th><th>Vendor</th><th>Vendor invoice no.</th><th>Invoice date</th><th>PO</th><th class="num">Total</th><th class="num">Net payable</th><th>Due date</th><th>Status</th></tr></thead><tbody>
+{% for b in rows %}<tr><td><a href="/bills/{{ b.id }}">{{ b.id }}</a></td><td>{{ b.legal_name }}</td><td>{{ b.vendor_invoice_no }}</td><td>{{ b.invoice_date|dmy }}</td><td>{{ b.po_id or '' }}</td><td class="num">{{ b.total|inr }}</td><td class="num">{{ b.net_payable|inr }}</td><td>{{ b.due_date|dmy }}</td><td>{{ m.status_badge(b.status) }}</td></tr>
+{% else %}<tr><td colspan="9" class="muted">No bills match your search.</td></tr>{% endfor %}
+</tbody></table>
+{{ m.pager(pager, 'q=' ~ q|urlencode ~ '&vendor=' ~ vendor ~ '&status=' ~ status) }}
+{% endblock %}

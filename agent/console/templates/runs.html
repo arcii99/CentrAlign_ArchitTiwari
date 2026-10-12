@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Runs{% endblock %}
+{% block body %}
+<section class="card new">
+  <h2>Give Nova a request</h2>
+  <form method="post" action="/runs">
+    <input name="request" placeholder='e.g. "Pay the Globex invoice"' required autofocus>
+    <input name="requester" value="Rahul Mehta (AP Manager)" title="Who is asking">
+    <label class="keep inline"><input type="checkbox" name="headed" value="1"> show Nova's browser</label>
+    <button class="primary">Start</button>
+  </form>
+  <p class="meta">Nova works in the Finance Portal, the mailbox and the drive. Anything that needs a person (an approval
+  the policy requires, or a question) waits in the <a href="/inbox">inbox</a>.
+  {% if running %}<b class="warn">A run is already in progress: two runs at once work on the same company.</b>{% endif %}</p>
+</section>
+
+<h2>Runs</h2>
+<table class="list">
+  <thead><tr><th>Run</th><th>Request</th><th>Status</th><th>Steps</th><th>Minutes</th><th>Started</th></tr></thead>
+  <tbody>
+  {% for r in runs %}
+    <tr class="{{ 'child' if r.parent }}">
+      <td><a href="/runs/{{ r.id }}">{{ r.id }}</a></td>
+      <td>{% if r.parent %}<span class="muted">↳ item of {{ r.parent[-4:] }}:</span> {% endif %}{{ r.request }}</td>
+      <td><span class="pill {{ tone(r.status) }}">{{ r.status }}</span></td>
+      <td>{{ r.steps }}</td>
+      <td>{{ r.minutes }}</td>
+      <td>{{ r.started_at[:16].replace("T", " ") }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">No runs yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

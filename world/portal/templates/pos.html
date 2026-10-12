@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Purchase orders{% endblock %}
+{% block content %}
+<h1>Purchase Orders</h1>
+<form class="filters" method="get" action="/purchase-orders" role="search">
+  <label for="{{ fid('q') }}">Search</label>
+  <input id="{{ fid('q') }}" name="q" value="{{ q }}" placeholder="PO number or description">
+  <label for="{{ fid('vendor') }}">Vendor</label>
+  <select id="{{ fid('vendor') }}" name="vendor"><option value="">All vendors</option>
+  {% for v in vendors %}<option value="{{ v.id }}"{% if vendor == v.id %} selected{% endif %}>{{ v.legal_name }}</option>{% endfor %}
+  </select>
+  <label for="{{ fid('status') }}">Status</label>
+  <select id="{{ fid('status') }}" name="status"><option value="">All</option>
+    <option value="open"{% if status == 'open' %} selected{% endif %}>Open</option>
+    <option value="closed"{% if status == 'closed' %} selected{% endif %}>Closed</option>
+  </select>
+  <button type="submit">Search</button>
+</form>
+<table class="grid"><thead><tr><th>PO</th><th>Date</th><th>Vendor</th><th>Description</th><th class="num">Value (excl. GST)</th><th>Status</th></tr></thead><tbody>
+{% for p in rows %}<tr><td><a href="/purchase-orders/{{ p.id }}">{{ p.id }}</a></td><td>{{ p.po_date|dmy }}</td><td>{{ p.legal_name }}</td><td>{{ p.description }}</td><td class="num">{{ p.value|inr }}</td><td>{{ p.status|title }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">No purchase orders match.</td></tr>{% endfor %}
+</tbody></table>
+{{ m.pager(pager, 'q=' ~ q|urlencode ~ '&vendor=' ~ vendor ~ '&status=' ~ status) }}
+{% endblock %}

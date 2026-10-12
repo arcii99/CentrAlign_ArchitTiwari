@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}New bill{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/bills">Bills</a> › New bill</div>
+<h1>New bill</h1>
+<p class="muted">Enter amounts as plain numbers (e.g. 177000.00) and dates as DD-MM-YYYY.</p>
+{{ m.errors(errors) }}
+<form method="post" action="/bills/new" class="form">
+  <div class="field"><label for="{{ fid('vendor_id') }}">Vendor <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('vendor_id') }}" name="vendor_id"><option value="">— Select vendor —</option>
+    {% for v in vendors %}<option value="{{ v.id }}"{% if form.get('vendor_id') == v.id %} selected{% endif %}>{{ v.id }} – {{ v.legal_name }}</option>{% endfor %}
+    </select></div>
+  {{ m.field("Vendor invoice no.", "vendor_invoice_no", form, required=True) }}
+  {{ m.field("Invoice date", "invoice_date", form, required=True, placeholder="DD-MM-YYYY") }}
+  {{ m.field("PO number", "po_id", form, placeholder="PO-2026-0000") }}
+  {{ m.field("Taxable value", "taxable_value", form, required=True) }}
+  {{ m.field("GST amount", "gst_amount", form, required=True) }}
+  {{ m.field("Invoice total", "total", form, required=True) }}
+  {{ m.field("TDS amount", "tds_amount", form) }}
+  {{ m.field("Net payable", "net_payable", form, required=True) }}
+  {{ m.field("Due date", "due_date", form, required=True, placeholder="DD-MM-YYYY") }}
+  <div class="field"><label for="{{ fid('status') }}">Status <span class="req" aria-hidden="true">*</span></label>
+    <select id="{{ fid('status') }}" name="status">
+      <option value="posted"{% if form.get('status') == 'posted' %} selected{% endif %}>Posted</option>
+      <option value="on_hold"{% if form.get('status') == 'on_hold' %} selected{% endif %}>On Hold</option>
+    </select></div>
+  {{ m.field("Hold reason", "status_reason", form, hint="Required if the status is On Hold") }}
+  {{ m.field("Notes", "notes", form) }}
+  <div class="actions"><button type="submit">Save bill</button> <a href="/bills">Cancel</a></div>
+</form>
+{% endblock %}

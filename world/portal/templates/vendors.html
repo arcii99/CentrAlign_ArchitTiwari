@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "macros.html" as m with context %}
+{% block title %}Vendors{% endblock %}
+{% block content %}
+<h1>Vendors</h1>
+<form class="filters" method="get" action="/vendors" role="search">
+  <label for="{{ fid('q') }}">Search</label>
+  <input id="{{ fid('q') }}" name="q" value="{{ q }}" placeholder="Vendor ID, name or GSTIN">
+  <label for="{{ fid('status') }}">Status</label>
+  <select id="{{ fid('status') }}" name="status">
+    <option value="">All</option>
+    <option value="active"{% if status == 'active' %} selected{% endif %}>Active</option>
+    <option value="blocked"{% if status == 'blocked' %} selected{% endif %}>Blocked</option>
+  </select>
+  <button type="submit">Search</button>
+  <a class="button" href="/vendors/new">+ New vendor</a>
+</form>
+<table class="grid"><thead><tr><th>Vendor ID</th><th>Legal name</th><th>GSTIN</th><th>Category</th><th>Terms</th><th>Status</th></tr></thead><tbody>
+{% for v in rows %}<tr><td><a href="/vendors/{{ v.id }}">{{ v.id }}</a></td><td>{{ v.legal_name }}</td><td>{{ v.gstin }}</td><td>{{ v.category|title }}</td><td>{{ v.payment_terms_days }} days</td><td>{{ v.status|title }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">No vendors match your search.</td></tr>{% endfor %}
+</tbody></table>
+{{ m.pager(pager, 'q=' ~ q|urlencode ~ '&status=' ~ status) }}
+{% endblock %}

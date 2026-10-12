@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Record payment{% endblock %}
+{% block content %}
+<div class="crumbs"><a href="/payments">Payments</a> › Record payment</div>
+<h1>Record payment</h1>
+{% if error %}<div class="errors" role="alert">{{ error }}</div>{% endif %}
+<form method="get" action="/payments/new" class="form inline">
+  <div class="field"><label for="{{ fid('bill') }}">Bill ID</label><input id="{{ fid('bill') }}" name="bill" value="{{ bill }}" placeholder="BILL-2026-0000"></div>
+  <div class="actions"><button type="submit">Continue</button></div>
+</form>
+{% endblock %}

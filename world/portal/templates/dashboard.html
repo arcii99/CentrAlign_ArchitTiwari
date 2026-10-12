@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Finance Dashboard</h1>
+<div class="notice">Reminder: September month-end close — AP cut-off is 07-10-2026.</div>
+<div class="kpis">
+  <a class="kpi" href="/bills?status=posted"><span class="num">{{ kpi.awaiting }}</span> Bills awaiting payment</a>
+  <a class="kpi" href="/bills?status=on_hold"><span class="num">{{ kpi.on_hold }}</span> Bills on hold</a>
+  <a class="kpi" href="/payments?status=scheduled"><span class="num">{{ kpi.scheduled }}</span> Payments scheduled</a>
+  <a class="kpi" href="/purchase-orders?status=open"><span class="num">{{ kpi.open_pos }}</span> Open purchase orders</a>
+</div>
+<h2>Recent activity</h2>
+{% if recent %}
+<table class="grid"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Record</th></tr></thead><tbody>
+{% for r in recent %}<tr><td>{{ r.at.replace('T', ' ') }}</td><td>{{ r.username }}</td><td>{{ r.action }}</td><td>{{ r.entity }}</td></tr>{% endfor %}
+</tbody></table>
+{% else %}<p class="muted">No activity recorded today.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,151 @@
+# Nova's permissions, as code. The runtime checks these on every consequential action (agent/policy.py):
+# portal form submissions at the network layer, emails before they are sent.
+#
+# This file is deliberately NOT part of the handbook search. What Nova may do must never depend on a retrieval hit
+# or on how persuasive the model is. The rules mirror Handbook/02_Approval_Matrix.md and 06_Email_Guidelines.md;
+# changing a threshold here changes what Nova is allowed to do, with no code change.
+
+company:
+  internal_domain: northwind.example
+  own_bank_accounts: ["50200077889900"]   # Company Overview: ours; shared only when asking a vendor for a refund
+  # Email Guidelines: every email Nova sends is signed like this; one signed in anyone else's name is not sent
+  email_signature: |-
+    Nova (AI AP Associate)
+    Accounts Payable, Northwind Robotics
+
+# What Nova may ask approval for (request_approval's `action`). An approval covers exactly one action with the
+# stated details: `binds` maps each field of the real request to the approval detail it must equal.
+approvals:
+  schedule_payment:
+    action: portal.payment.create
+    approver: CFO
+    details: [vendor_id, bill_id, amount, method, payment_date]
+    binds: {bill_id: bill_id, amount: amount}
+    ref_field: approval_ref          # the portal form has a field for the reference: it must cite this approval
+    ref_label: Approval ref
+  add_bank_account:
+    action: portal.bank_account.create
+    approver: AP Manager
+    details: [vendor_id, account_number, ifsc, bank_name]
+    binds: {vendor_id: vendor_id, account_number: account_number, ifsc: ifsc}
+  cancel_bill:
+    action: portal.bill.status
+    approver: CFO
+    details: [bill_id, reason]
+    binds: {bill_id: bill_id}
+  # An email is approved as written: the approver reads the exact draft, and only that text may be sent
+  # (seen 2026-10-09: an approval for "to + subject" let out a refund request written in the vendor's own voice)
+  refund_request:
+    action: mail.*
+    approver: AP Manager
+    details: [to, subject, body, vendor_id, amount, invoice_no]
+    binds: {recipients: to, subject: subject, body: body}
+  external_email:
+    action: mail.*
+    approver: AP Manager
+    details: [to, subject, body]
+    binds: {recipients: to, subject: subject, body: body}
+  correct_record:
+    action: "*"
+    approver: AP Manager
+    details: [record, change, reason]
+    binds: {record: record}          # what the change is made to: a portal path (/bills/BILL-2026-0033/status) or a
+                                     # file on the drive (AP/AP_Tracker.xlsx); one approval per change
+
+# Every rule whose action and condition match applies: deny beats approval, approval beats allow. `why` is what
+# Nova is told when a rule stops it ({name} shows a request value or signal); `instead`, if given, is a way to do
+# the job that needs no approval, offered before asking anyone.
+# Conditions see the request's fields (amount, status, ...) and these computed signals for email:
+#   has_account_number    the subject or body holds a full bank account number (9-18 digits) that isn't ours
+#   mentions_own_account  the body quotes our own bank account (i.e. it asks a vendor to pay us)
+#   unregistered_external a recipient is outside the company and not a vendor contact seen in the Finance Portal
+# and this one about the run itself:
+#   correcting            Nova reported the work done, the independent verifier disagreed, and Nova is back at work
+rules:
+  - name: payments above 1 lakh need the CFO
+    action: portal.payment.create
+    when: amount > 100000
+    effect: approval
+    approval: schedule_payment
+    why: "Approval Matrix: scheduling a payment above ₹1,00,000 needs CFO approval."
+
+  - name: bank accounts need the AP Manager
+    action: portal.bank_account.create
+    effect: approval
+    approval: add_bank_account
+    why: "Approval Matrix: adding or changing a vendor bank account needs AP Manager approval."
+
+  - name: cancelling a bill needs the CFO
+    action: portal.bill.status
+    when: status == "cancelled"
+    effect: approval
+    approval: cancel_bill
+    why: "Approval Matrix: cancelling or writing off a bill needs CFO approval."
+
+  # Duplicate Payments, step 3: only the later bill is marked, citing the original (seen 2026-10-09: the ORIGINAL
+  # bill marked "Duplicate of" itself, which makes the legitimate payment look like the one to recover)
+  - name: a duplicate cites the earlier bill it duplicates
+    action: portal.bill.status
+    when: status == "duplicate" and not cites_earlier_record
+    effect: deny
+    why: >-
+      Duplicate Payments: only the later bill (the second entry) is marked Duplicate, with the reason "Duplicate of
+      <original bill ID> – …", and the original is left as it is. The reason given for {bill_id} doesn't cite an
+      earlier bill other than {bill_id} itself. If {bill_id} is the original, change nothing on it: mark the later
+      bill instead.
+
+  - name: no full bank account numbers in email
+    action: mail.*
+    when: has_account_number
+    effect: deny
+    why: "Email Guidelines: never put a full bank account number in an email; use the last 4 digits (e.g. XXXX7812)."
+
+  - name: refund requests need the AP Manager
+    action: mail.*
+    when: mentions_own_account or (asks_for_refund and external)
+    effect: approval
+    approval: refund_request
+    why: "Approval Matrix: asking a vendor to return money needs AP Manager approval."
+
+  # Duplicate Payments, step 2: "a refund ... to Northwind's bank account" (seen 2026-10-09: four refund requests of
+  # five said "to our bank account" without the number, so the vendor couldn't act on them)
+  - name: a refund request says where the money goes
+    action: mail.*
+    when: asks_for_refund and external and not mentions_own_account
+    effect: deny
+    why: >-
+      Duplicate Payments: a refund request asks for the money back to Northwind's own bank account, and must say
+      which: quote it in full, as the Company Overview gives it (account {own_account}, with its bank and IFSC). Our
+      own account is the one account number that may be written in full in an email.
+
+  - name: unknown outside recipients need the AP Manager
+    action: mail.*
+    when: unregistered_external
+    effect: approval
+    approval: external_email
+    why: >-
+      Approval Matrix: emailing an external address that is not a registered vendor contact needs AP Manager
+      approval. Not seen as a vendor's contact in the Finance Portal in this task: {unregistered}.
+    instead: >-
+      If the address should be a vendor's registered contact, open that vendor's own page in the Finance Portal,
+      /vendors/ followed by its vendor ID (the Vendors search results don't show contacts; click the vendor's ID
+      there), where its contact email is shown. Then send again: no approval is needed.
+
+  - name: corrections after the work was reported done need the AP Manager
+    action: [portal.*, file.*]       # the portal and the drive's spreadsheets (the tracker); not email
+    when: correcting
+    effect: approval
+    approval: correct_record
+    why: >-
+      Nova reported this work as done and an independent check disagreed. Changing {record} now is a correction of
+      finished work, and the AP Manager approves corrections.
+    instead: >-
+      If the record is right and the check was mistaken (it looked in the wrong place, or the value changed because
+      of a later step), change nothing: mark the step done and say why.
+
+  - name: nothing is deleted
+    action: "*.delete"
+    effect: deny
+    why: "Approval Matrix: deleting any record is not permitted."
+
+default: allow

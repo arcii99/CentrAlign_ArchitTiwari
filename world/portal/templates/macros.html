@@ -1,0 +1,25 @@
+{% macro errors(errs) -%}
+{% if errs %}<div class="errors" role="alert"><b>Please correct the following:</b><ul>{% for e in errs %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+{%- endmacro %}
+
+{% macro flash_box(flash) -%}
+{% set texts = {"created": "Record created successfully.", "bank_added": "Bank account added.", "status": "Status updated."} %}
+{% if flash and flash in texts %}<div class="flash ok" role="status">{{ texts[flash] }}</div>{% endif %}
+{%- endmacro %}
+
+{% macro field(label, name, form, required=False, type="text", placeholder="", hint="") -%}
+<div class="field">
+  <label for="{{ fid(name) }}">{{ label }}{% if required %} <span class="req" aria-hidden="true">*</span>{% endif %}</label>
+  <input id="{{ fid(name) }}" name="{{ name }}" type="{{ type }}" value="{{ form.get(name, '') }}"{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if required %} aria-required="true"{% endif %}>
+  {% if hint %}<span class="hint">{{ hint }}</span>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro pager(p, params) -%}
+<div class="pager">Page {{ p.page }} of {{ p.pages }} · {{ p.total }} records
+{% if p.page > 1 %} · <a href="?{{ params }}&page={{ p.page - 1 }}">‹ Previous</a>{% endif %}
+{% if p.page < p.pages %} · <a href="?{{ params }}&page={{ p.page + 1 }}">Next ›</a>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro status_badge(s) -%}<span class="badge b-{{ s }}">{{ statuses.get(s, s|title) }}</span>{%- endmacro %}

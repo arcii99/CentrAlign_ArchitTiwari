@@ -1,0 +1,15 @@
+<ol class="timeline">
+{% for r in rows %}
+  <li class="ev {{ r.cls }}{% if r.ok is false %} failed{% endif %}">
+    <span class="at">{{ r.at }}</span>
+    <div>
+      <b>{% if r.step %}<span class="step">#{{ r.step }}</span> {% endif %}{{ r.title }}</b>
+      {% if r.body %}<div class="body">{{ r.body }}</div>{% endif %}
+      {% if r.action %}<div class="action">→ {{ r.action }}</div>{% endif %}
+      {% if r.result %}<div class="result">{{ "✓" if r.ok else "✗" }} {{ r.result }}</div>{% endif %}
+    </div>
+  </li>
+{% else %}
+  <li class="muted">Nothing yet.</li>
+{% endfor %}
+</ol>

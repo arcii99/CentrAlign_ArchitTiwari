@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Benchmark {{ name }}{% endblock %}
+{% block body %}
+<h1>Benchmark <code>{{ name }}</code></h1>
+{% set o = s.overall %}
+{% if o %}
+<section class="stats">
+  <div><b>{{ o.passed }}/{{ o.trials }}</b><span>trials passed the ground-truth grader</span></div>
+  <div><b>{{ o.unsafe }}</b><span>unsafe trials (safety invariants broken)</span></div>
+  <div><b>{{ o.verified_but_failed }}</b><span>times Nova said “verified” and was wrong</span></div>
+  <div><b>{{ o.interventions }}</b><span>people interrupted per trial (mean)</span></div>
+</section>
+<p class="meta">Model {{ s.models|join(", ") }} · code {{ s.code|join(", ") }} · {{ (s.first or "")[:16].replace("T", " ") }} → {{ (s.last or "")[:16].replace("T", " ") }}</p>
+
+<h2>By task and chaos</h2>
+<table class="list">
+  <thead><tr><th>Task</th><th>Chaos</th><th>Passed</th><th>All k passed</th><th>Criteria met</th><th>Unsafe</th><th>People interrupted</th><th>Steps (median)</th><th>Minutes (median)</th><th>How runs ended</th></tr></thead>
+  <tbody>
+  {% for key, c in s.cells.items() %}{% set t, chaos = key.split("|") %}
+    <tr><td>{{ t|upper }} {{ tasks.get(t, "") }}</td><td>{{ chaos }}</td><td><b>{{ c.passed }}/{{ c.trials }}</b></td>
+      <td>{{ "yes" if c.all_passed else "no" }}</td><td>{{ (c.criteria * 100)|round|int }}%</td><td>{{ c.unsafe }}</td>
+      <td>{{ c.interventions }}</td><td>{{ c.steps }}</td><td>{{ c.minutes }}</td>
+      <td class="small">{% for k, v in c.statuses.items() %}{{ k }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Does Nova know when it has succeeded?</h2>
+<table class="list matrix">
+  <thead><tr><th></th><th>Ground truth: passed</th><th>Ground truth: failed</th></tr></thead>
+  <tbody>
+    <tr><th>Nova said “verified”</th><td class="good">{{ o.verified - o.verified_but_failed }}</td><td class="bad">{{ o.verified_but_failed }}</td></tr>
+    <tr><th>Nova said anything else</th><td>{{ o.passed_unclaimed }}</td><td>{{ o.trials - o.verified - o.passed_unclaimed }}</td></tr>
+  </tbody>
+</table>
+{% endif %}
+
+{% if s.rpa %}
+<h2>Nova vs a scripted bot (T1)</h2>
+<p class="meta">The bot has fixed selectors and steps; the reasoning (TDS, due date, bank account) was worked out by a
+person beforehand, and its approval reference is hard-coded.</p>
+<table class="list">
+  <thead><tr><th>Chaos</th><th>Bot passed</th><th>Nova passed</th><th>Bot errors</th></tr></thead>
+  <tbody>
+  {% for c, b in s.rpa.items() %}{% set n = s.nova_t1.get(c) %}
+    <tr><td>{{ c }}</td><td>{{ b.passed }}/{{ b.trials }}</td><td>{% if n %}{{ n.passed }}/{{ n.trials }}{% else %}not run{% endif %}</td>
+      <td class="small">{{ b.errors|join("; ") or "–" }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if s.memory %}
+<h2>Memory: the same task twice, from an empty memory</h2>
+<table class="list">
+  <thead><tr><th>Pair</th><th>Run 1</th><th>Run 2</th></tr></thead>
+  <tbody>
+  {% for m in s.memory %}
+    <tr><td>{{ m.pair }}</td>
+      <td>{% if m.run1 %}{{ "pass" if m.run1.passed else "fail" }} · {{ m.run1.questions }} question(s) to people · {{ m.run1.approvals }} approval(s) · {{ m.run1.lessons_learned }} lesson(s) kept{% endif %}</td>
+      <td>{% if m.run2 %}{{ "pass" if m.run2.passed else "fail" }} · {{ m.run2.questions }} question(s) to people · {{ m.run2.from_memory }} answered from memory · {{ m.run2.approvals }} approval(s){% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Every trial</h2>
+<table class="list">
+  <thead><tr><th>Trial</th><th>Grader</th><th>Nova said</th><th>Steps</th><th>Minutes</th><th>People</th><th>Failed criteria / why it stopped</th><th>Log</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{ r.key }}</td>
+      <td><span class="pill {{ 'good' if r.passed else 'bad' }}">{{ "pass" if r.passed else "fail" }} {{ r.criteria_passed }}/{{ r.criteria_total }}</span>{% if r.violations %} <span class="pill bad">UNSAFE</span>{% endif %}</td>
+      <td>{% if r.status %}<span class="pill {{ tone(r.status) }}">{{ r.status }}</span>{% else %}<span class="muted">bot</span>{% endif %}</td>
+      <td>{{ r.steps if r.steps is defined else "–" }}</td><td>{{ ((r.seconds or 0) / 60)|round(1) }}</td>
+      <td>{{ r.interventions if r.interventions is defined else "–" }}{% if r.from_memory %} ({{ r.from_memory }} from memory){% endif %}</td>
+      <td class="small">{{ (r.failed_criteria or [])|join("; ") }}{% for v in r.violations or [] %} UNSAFE: {{ v }}{% endfor %}
+        {% if r.stops %}<div class="muted">{{ r.stops|join("; ") }}</div>{% endif %}{% if r.error %}<div class="muted">{{ r.error }}</div>{% endif %}</td>
+      <td>{% if r.kind != "rpa" %}<a href="/bench/{{ name }}/logs/{{ r.key }}">log</a>{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
